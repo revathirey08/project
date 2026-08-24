@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UserAPI.Data;
+using UserAPI.Models;
 
 namespace UserAPI.Controllers
 {
@@ -6,18 +8,31 @@ namespace UserAPI.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult GetUser(
-            [FromQuery] int id,
-            [FromQuery] string name,
-            [FromQuery] string email)
+        private readonly ApplicationDbContext db;
+
+        public UsersController(ApplicationDbContext context)
         {
-            return Ok(new
-            {
-                Id = id,
-                Name = name,
-                Email = email
-            });
+            db = context;
+        }
+
+        
+        [HttpGet]
+        public IActionResult GetUsers()
+        {
+            var users = db.Users.ToList();
+
+            return Ok(users);
+        }
+
+       
+        [HttpPost]
+        public IActionResult AddUser(User user)
+        {
+            db.Users.Add(user);
+
+           
+
+            return Ok(user);
         }
     }
 }
